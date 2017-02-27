@@ -1,0 +1,9 @@
+Django==1.10.5
+oauthlib==2.0.1
+requests-oauthlib==0.8.0
+gunicorn==19.6.0
+dj-database-url==0.4.2
+whitenoise==3.3.0
+psycopg2==2.6.2
+pytz==2013.7
+python-dateutil==2.6.0

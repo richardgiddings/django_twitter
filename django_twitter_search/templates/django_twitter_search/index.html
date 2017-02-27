@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form action="{% url 'django_twitter_search:search' %}" method="get">
+    <div class="search_bar">
+        <input type="text" name="search_term" placeholder="Type your search here" />
+        <input type="submit" value="Search" class="button" />
+    </div>
+</form>
+<div class="links">
+    <a href="{% url 'django_twitter_search:archive' %}">Archive</a>
+</div>
+
+{% if results %}
+
+<div class="tweets">
+{% for result in results %}
+    <form action="{% url 'django_twitter_search:save' %}" method="post">{% csrf_token %}
+        <div class="tweet">
+            <div class="tweet__header">
+                <img src="{{ result.profile_image_url }}" alt="Profile image" />
+                <div class="header__name">
+                    {{ result.name }}
+                </div>
+                <div class="header__screen_name">
+                    &#64;{{ result.screen_name }}
+                </div>
+            </div>
+            <div class="tweet__text">
+                {{ result.text }}
+            </div>
+            <div class="tweet__detail">
+                <div class="detail__retweet">RETWEETS</div> {{ result.retweet_count }}
+                <div class="detail__like">LIKES</div> {{ result.favorite_count }}
+                <input type="submit" value="+" class="button button-add-delete" />
+            </div>
+            <div class="tweet__date">
+                {{ result.created_at|date:"g:i A - j N Y" }}
+            </div>
+        </div>
+        <input type="hidden" name="profile_image_url" value="{{ result.profile_image_url }}">
+        <input type="hidden" name="name" value="{{ result.name }}">
+        <input type="hidden" name="screen_name" value="{{ result.screen_name }}">
+        <input type="hidden" name="text" value="{{ result.text }}">
+        <input type="hidden" name="retweet_count" value="{{ result.retweet_count }}">
+        <input type="hidden" name="favorite_count" value="{{ result.favorite_count }}">
+        <input type="hidden" name="created_at" value="{{ result.created_at }}">
+    </form>
+{% endfor %}
+</div>
+
+{% endif %}
+
+{% endblock %}

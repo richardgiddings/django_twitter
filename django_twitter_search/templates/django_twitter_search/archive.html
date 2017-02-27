@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Archive</h1>
+
+<div class="links">
+    <a href="{% url 'django_twitter_search:index' %}">Back to search</a>
+</div>
+
+{% if tweets %}
+
+<div class="tweets">
+{% for tweet in tweets %}
+    <form action="{% url 'django_twitter_search:delete' tweet.id %}" method="post">{% csrf_token %}
+        <div class="tweet">
+            <div class="tweet__header">
+                <img src="{{ tweet.profile_image_url }}" alt="Profile image" />
+                <div class="header__name">
+                    {{ tweet.name }}
+                </div>
+                <div class="header__screen_name">
+                    &#64;{{ tweet.screen_name }}
+                </div>
+            </div>
+            <div class="tweet__text">
+                {{ tweet.text }}
+            </div>
+            <div class="tweet__detail">
+                <div class="detail__retweet">RETWEETS</div> {{ tweet.retweets }}
+                <div class="detail__like">LIKES</div> {{ tweet.favourites }}
+                <input type="submit" value="-" class="button button-add-delete" />
+            </div>
+            <div class="tweet__date">
+                {{ tweet.date|date:"g:i A - j N Y" }}
+            </div>
+        </div>
+    </form>
+{% endfor %}
+</div>
+
+{% endif %}
+
+{% endblock %}
