@@ -17,7 +17,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 ALLOWED_HOSTS = [os.environ['ALLOWED_HOST']]
 
-DEBUG = True
+DEBUG = False
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
