@@ -1,13 +1,19 @@
 import os
-from requests_oauthlib import OAuth1Session
 import json
 import urllib
-from datetime import datetime
+
+from requests_oauthlib import OAuth1Session
 from dateutil import parser
+
+CONSUMER_API_KEY = '<from_your_twitter_dev_account>'
+CONSUMER_API_SECRET = '<from_your_twitter_dev_account>'
 
 BASE_URL = 'https://api.twitter.com/1.1/search/tweets.json?q='
 
 def search_twitter(term, count):
+    """
+    Search Twitter
+    """
 
     # encode the search term
     encoded_string = urllib.parse.quote_plus(term)
@@ -45,6 +51,54 @@ def search_twitter(term, count):
         data.append(elem)
 
     return data
+
+def authenticate():
+    """
+    Initial authentication. Only needs to be done once
+    """
+
+    client_key = CONSUMER_API_KEY
+    client_secret = CONSUMER_API_SECRET
+
+    # 1. Obtain a request token which will identify you (the client) in the next step.
+
+    request_token_url = 'https://api.twitter.com/oauth/request_token'
+
+    oauth = OAuth1Session(client_key, client_secret=client_secret)
+    fetch_response = oauth.fetch_request_token(request_token_url)
+
+    resource_owner_key = fetch_response.get('oauth_token')
+    resource_owner_secret = fetch_response.get('oauth_token_secret')
+
+    # 2. Obtain authorization from the user (resource owner) to access their protected resources 
+
+    base_authorization_url = 'https://api.twitter.com/oauth/authorize'
+
+    authorization_url = oauth.authorization_url(base_authorization_url)
+    print('Please go here and authorize,', authorization_url)
+    verifier = input('Please input the verifier: ')
+
+    # 3. Obtain an access token from the OAuth provider. 
+
+    access_token_url = 'https://api.twitter.com/oauth/access_token'
+
+    oauth = OAuth1Session(client_key,
+                          client_secret=client_secret,
+                          resource_owner_key=resource_owner_key,
+                          resource_owner_secret=resource_owner_secret,
+                          verifier=verifier)
+
+    oauth_tokens = oauth.fetch_access_token(access_token_url)
+
+    resource_owner_key = oauth_tokens.get('oauth_token')
+    resource_owner_secret = oauth_tokens.get('oauth_token_secret')
+
+    #print("oauth_token: {}".format(resource_owner_key))
+    #print("oauth_token_secret: {}".format(resource_owner_secret))
+    #print("client_key: {}".format(client_key))
+    #print("client_secret: {}".format(client_secret))
+
+    return (resource_owner_key, resource_owner_secret, client_key, client_secret)
 
 
 """
